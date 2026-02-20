@@ -28,10 +28,23 @@ jobs:
           powershell -ExecutionPolicy Bypass -File .\build.ps1
           powershell -ExecutionPolicy Bypass -File .\build_installer.ps1
 
+      # ✅ NOVO: descobrir exatamente onde ficou o exe
+      - name: Locate installer exe (debug)
+        shell: powershell
+        run: |
+          $found = Get-ChildItem -Path . -Recurse -Filter "ZaldoPrinterSetup*.exe" -ErrorAction SilentlyContinue
+          if (-not $found) {
+            Write-Host "ERROR: Nenhum ZaldoPrinterSetup*.exe encontrado. Listando dist/output para debug..."
+            Get-ChildItem -Path . -Recurse -Depth 4 | Select-Object FullName
+            exit 1
+          }
+          $found | ForEach-Object { Write-Host "FOUND: $($_.FullName)" }
+
+      # ✅ NOVO: upload com padrão amplo e com erro se não achar
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: ZaldoPrinterSetup
+          if-no-files-found: error
           path: |
-            zaldo_printer/dist/ZaldoPrinterSetup.exe
-            **/ZaldoPrinterSetup.exe
+            **/ZaldoPrinterSetup*.exe
