@@ -19,28 +19,49 @@ jobs:
         shell: powershell
         run: |
           choco install innosetup -y
+          Write-Host "ISCC (Inno Setup) on PATH:"
           where.exe ISCC
+          Write-Host "Default Inno path check:"
+          if (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe") { "OK" } else { "NOT FOUND" }
 
-      - name: Run build scripts
+      - name: Run build scripts (fail loud + show outputs)
         shell: powershell
         run: |
-          cd zaldo_printer/scripts
-          powershell -ExecutionPolicy Bypass -File .\build.ps1
-          powershell -ExecutionPolicy Bypass -File .\build_installer.ps1
+          $ErrorActionPreference = "Stop"
 
-      # ✅ NOVO: descobrir exatamente onde ficou o exe
-      - name: Locate installer exe (debug)
-        shell: powershell
-        run: |
-          $found = Get-ChildItem -Path . -Recurse -Filter "ZaldoPrinterSetup*.exe" -ErrorAction SilentlyContinue
-          if (-not $found) {
-            Write-Host "ERROR: Nenhum ZaldoPrinterSetup*.exe encontrado. Listando dist/output para debug..."
-            Get-ChildItem -Path . -Recurse -Depth 4 | Select-Object FullName
-            exit 1
+          Set-Location zaldo_printer/scripts
+
+          Write-Host "=== Running build.ps1 ==="
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
+
+          Write-Host "=== Running build_installer.ps1 ==="
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\build_installer.ps1
+
+          Write-Host "=== After scripts: list dist/installer/output folders ==="
+          Set-Location ../..
+
+          if (Test-Path "zaldo_printer/dist") {
+            Write-Host "---- zaldo_printer/dist ----"
+            Get-ChildItem -Path "zaldo_printer/dist" -Recurse | Select-Object FullName
+          } else {
+            Write-Host "NO zaldo_printer/dist folder"
           }
-          $found | ForEach-Object { Write-Host "FOUND: $($_.FullName)" }
 
-      # ✅ NOVO: upload com padrão amplo e com erro se não achar
+          if (Test-Path "zaldo_printer/installer") {
+            Write-Host "---- zaldo_printer/installer ----"
+            Get-ChildItem -Path "zaldo_printer/installer" -Recurse | Select-Object FullName
+          } else {
+            Write-Host "NO zaldo_printer/installer folder"
+          }
+
+          Write-Host "---- Searching for any *Setup*.exe ----"
+          $found = Get-ChildItem -Path . -Recurse -Filter "*Setup*.exe" -ErrorAction SilentlyContinue
+          if ($found) {
+            $found | ForEach-Object { Write-Host "FOUND: $($_.FullName)" }
+          } else {
+            Write-Host "No *Setup*.exe found."
+          }
+
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
@@ -48,3 +69,4 @@ jobs:
           if-no-files-found: error
           path: |
             **/ZaldoPrinterSetup*.exe
+            **/*Setup*.exe
