@@ -27,12 +27,13 @@ Name: "{autodesktop}\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.Config
 Name: "desktopicon"; Description: "Criar atalho no desktop"; GroupDescription: "Atalhos:"
 
 [Run]
-Filename: "{cmd}"; Parameters: "/C sc query \"ZaldoPrinterService\" >nul 2>nul && sc stop \"ZaldoPrinterService\" >nul 2>nul"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C sc query \"ZaldoPrinterService\" >nul 2>nul || sc create \"ZaldoPrinterService\" binPath= \"\"\"{app}\\ZaldoPrinter.Service.exe\"\"\" start= auto DisplayName= \"\"\"Zaldo Printer Service\"\"\""; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C sc description \"ZaldoPrinterService\" \"Zaldo Printer local API and thermal print service\""; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C sc start \"ZaldoPrinterService\""; Flags: runhidden
+Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
+Filename: "{sys}\sc.exe"; Parameters: "create ""ZaldoPrinterService"" binPath= ""{app}\ZaldoPrinter.Service.exe"" start= auto DisplayName= ""Zaldo Printer Service"""; Flags: runhidden ignoreerrors
+Filename: "{sys}\sc.exe"; Parameters: "config ""ZaldoPrinterService"" binPath= ""{app}\ZaldoPrinter.Service.exe"" start= auto DisplayName= ""Zaldo Printer Service"""; Flags: runhidden ignoreerrors
+Filename: "{sys}\sc.exe"; Parameters: "description ""ZaldoPrinterService"" ""Zaldo Printer local API and thermal print service"""; Flags: runhidden ignoreerrors
+Filename: "{sys}\sc.exe"; Parameters: "start ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
 Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Description: "Abrir Zaldo Printer Config"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
-Filename: "{cmd}"; Parameters: "/C sc stop \"ZaldoPrinterService\" >nul 2>nul"; Flags: runhidden
-Filename: "{cmd}"; Parameters: "/C sc delete \"ZaldoPrinterService\" >nul 2>nul"; Flags: runhidden
+Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
+Filename: "{sys}\sc.exe"; Parameters: "delete ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
