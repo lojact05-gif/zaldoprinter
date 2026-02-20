@@ -7,7 +7,8 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -23,7 +24,7 @@ jobs:
       - name: Run build scripts
         shell: powershell
         run: |
-          cd tools/zaldo_printer/scripts
+          cd zaldo_printer/scripts
           powershell -ExecutionPolicy Bypass -File .\build.ps1
           powershell -ExecutionPolicy Bypass -File .\build_installer.ps1
 
@@ -32,6 +33,5 @@ jobs:
         with:
           name: ZaldoPrinterSetup
           path: |
+            zaldo_printer/dist/ZaldoPrinterSetup.exe
             **/ZaldoPrinterSetup.exe
-            **/dist/ZaldoPrinterSetup.exe
-            **/ZaldoPrinterSetup*.exe
