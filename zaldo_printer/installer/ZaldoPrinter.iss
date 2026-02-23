@@ -19,9 +19,15 @@ WizardStyle=modern
 [Files]
 Source: "..\dist\package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Code]
+function CanLaunchConfigApp: Boolean;
+begin
+  Result := FileExists(ExpandConstant('{app}\ZaldoPrinter.ConfigApp.exe'));
+end;
+
 [Icons]
-Name: "{autoprograms}\Zaldo Printer\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"
-Name: "{autodesktop}\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Tasks: desktopicon
+Name: "{autoprograms}\Zaldo Printer\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Check: CanLaunchConfigApp
+Name: "{autodesktop}\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Tasks: desktopicon; Check: CanLaunchConfigApp
 
 [Tasks]
 Name: "desktopicon"; Description: "Criar atalho no desktop"; GroupDescription: "Atalhos:"
@@ -32,7 +38,7 @@ Filename: "{sys}\sc.exe"; Parameters: "create ""ZaldoPrinterService"" binPath= "
 Filename: "{sys}\sc.exe"; Parameters: "config ""ZaldoPrinterService"" binPath= ""{app}\ZaldoPrinter.Service.exe"" start= auto DisplayName= ""Zaldo Printer Service"""; Flags: runhidden
 Filename: "{sys}\sc.exe"; Parameters: "description ""ZaldoPrinterService"" ""Zaldo Printer local API and thermal print service"""; Flags: runhidden
 Filename: "{sys}\sc.exe"; Parameters: "start ""ZaldoPrinterService"""; Flags: runhidden
-Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Description: "Abrir Zaldo Printer Config"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Description: "Abrir Zaldo Printer Config"; Flags: nowait postinstall skipifsilent; Check: CanLaunchConfigApp
 
 [UninstallRun]
 Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden
