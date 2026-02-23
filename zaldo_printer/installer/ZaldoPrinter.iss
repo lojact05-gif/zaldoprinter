@@ -27,13 +27,25 @@ Name: "{autodesktop}\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.Config
 Name: "desktopicon"; Description: "Criar atalho no desktop"; GroupDescription: "Atalhos:"
 
 [Run]
+; Para o serviço se existir (ignora erro se não existir)
 Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
+
+; Cria o serviço (ignora erro se já existir)
 Filename: "{sys}\sc.exe"; Parameters: "create ""ZaldoPrinterService"" binPath= ""{app}\ZaldoPrinter.Service.exe"" start= auto DisplayName= ""Zaldo Printer Service"""; Flags: runhidden ignoreerrors
+
+; Garante configuração correta (mesmo se já existir)
 Filename: "{sys}\sc.exe"; Parameters: "config ""ZaldoPrinterService"" binPath= ""{app}\ZaldoPrinter.Service.exe"" start= auto DisplayName= ""Zaldo Printer Service"""; Flags: runhidden ignoreerrors
+
+; Descrição do serviço
 Filename: "{sys}\sc.exe"; Parameters: "description ""ZaldoPrinterService"" ""Zaldo Printer local API and thermal print service"""; Flags: runhidden ignoreerrors
+
+; Inicia o serviço
 Filename: "{sys}\sc.exe"; Parameters: "start ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
+
+; Abre a UI ao final (mantém exatamente o planejado)
 Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Description: "Abrir Zaldo Printer Config"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
+; Para e remove o serviço ao desinstalar (ignora erros)
 Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
 Filename: "{sys}\sc.exe"; Parameters: "delete ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
