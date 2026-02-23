@@ -32,4 +32,15 @@ New-Item -ItemType Directory -Path $package -Force | Out-Null
 Copy-Item (Join-Path $serviceOut "*") $package -Recurse -Force
 Copy-Item (Join-Path $configOut "*") $package -Recurse -Force
 
+$required = @(
+    (Join-Path $package "ZaldoPrinter.Service.exe"),
+    (Join-Path $package "ZaldoPrinter.ConfigApp.exe")
+)
+
+foreach ($req in $required) {
+    if (!(Test-Path $req)) {
+        throw "Build incompleto: ficheiro obrigatório em falta -> $req"
+    }
+}
+
 Write-Host "Build complete: $package"
