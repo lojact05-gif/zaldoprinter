@@ -29,7 +29,7 @@ public sealed class FileLog
 
         lock (_sync)
         {
-            File.AppendAllText(file, line + Environment.NewLine, System.Text.Encoding.UTF8);
+            File.AppendAllText(file, line + Environment.NewLine, global::System.Text.Encoding.UTF8);
         }
     }
 }
