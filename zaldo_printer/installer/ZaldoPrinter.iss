@@ -19,12 +19,12 @@ WizardStyle=modern
 [Files]
 Source: "..\dist\package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Tasks]
+Name: "desktopicon"; Description: "Criar atalho no desktop"; GroupDescription: "Atalhos:"
+
 [Icons]
 Name: "{autoprograms}\Zaldo Printer\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"
 Name: "{autodesktop}\Zaldo Printer Config"; Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Tasks: desktopicon
-
-[Tasks]
-Name: "desktopicon"; Description: "Criar atalho no desktop"; GroupDescription: "Atalhos:"
 
 [Run]
 ; Para o serviço se existir (ignora erro se não existir)
@@ -42,10 +42,9 @@ Filename: "{sys}\sc.exe"; Parameters: "description ""ZaldoPrinterService"" ""Zal
 ; Inicia o serviço
 Filename: "{sys}\sc.exe"; Parameters: "start ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
 
-; Abre a UI ao final (mantém exatamente o planejado)
+; Abre a UI ao final
 Filename: "{app}\ZaldoPrinter.ConfigApp.exe"; Description: "Abrir Zaldo Printer Config"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
-; Para e remove o serviço ao desinstalar (ignora erros)
 Filename: "{sys}\sc.exe"; Parameters: "stop ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
 Filename: "{sys}\sc.exe"; Parameters: "delete ""ZaldoPrinterService"""; Flags: runhidden ignoreerrors
