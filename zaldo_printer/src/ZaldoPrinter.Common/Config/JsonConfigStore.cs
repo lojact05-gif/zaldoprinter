@@ -138,7 +138,7 @@ public sealed class JsonConfigStore
     {
         var tmp = _configFile + ".tmp";
         var json = JsonSerializer.Serialize(config, JsonOptions);
-        File.WriteAllText(tmp, json, System.Text.Encoding.UTF8);
+        File.WriteAllText(tmp, json, global::System.Text.Encoding.UTF8);
         File.Copy(tmp, _configFile, true);
         File.Delete(tmp);
     }
